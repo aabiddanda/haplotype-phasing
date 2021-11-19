@@ -1,0 +1,9 @@
+name: 54gene-phasing
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - snakemake
+  - git
+  - bcftools

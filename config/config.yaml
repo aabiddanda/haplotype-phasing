@@ -1,0 +1,15 @@
+# This file should contain everything to configure the workflow on a global scale.
+# In case of sample based data, it should be complemented by a manifest file that contains
+# one row per sample. It can be parsed easily via pandas.
+manifest: "config/manifest.tsv"
+genome_build: "b38"
+tools:
+  shapeit4:
+    mcmc-iterations: "10b,1p,1b,1p,1b,1p,1b,1p,10m"
+    pbwt-depth: 8
+    pbwt-mdr: 0.01
+    pbwt-mac: 2
+  eagle2:
+    max-missing-snp: 0.1
+    max-missing-indiv: 0.1
+    kpbwt: 8

@@ -1,0 +1,8 @@
+name: shapeit4
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bcftools
+  - shapeit4
+  - tabix

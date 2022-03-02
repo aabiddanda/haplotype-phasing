@@ -1,0 +1,7 @@
+name: eagle2
+channels:
+  - https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene
+  - bioconda
+  - conda-forge
+dependencies:
+  - eagle

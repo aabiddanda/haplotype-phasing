@@ -28,10 +28,13 @@ repos:
   rev: 5.9.3
   hooks:
   - id: isort
-
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.1.1
+  hooks:
+  - id: pydocstyle
 
 ## Snakemake linting
-#- repo: https://github.com/snakemake/snakefmt
-  #rev: 0.4.3
-  #hooks:
-  #- id: snakefmt
+- repo: https://github.com/snakemake/snakefmt
+  rev: 0.4.3
+  hooks:
+  - id: snakefmt

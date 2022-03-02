@@ -11,8 +11,20 @@ sandbox
 sandbox/*
 !sandbox/README.md
 
+logs
+logs/*
+
+github.com
+github.com/*
+
+data/*
+config/*.tsv
+testdata
+testdata/*
+
 # Workflow Artifacts
 .snakemake/
+checkpoints/
 
 # C Artifacts
 *.so

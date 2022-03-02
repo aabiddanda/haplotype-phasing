@@ -1,3 +1,3 @@
-Sample_ID	condition
-A	untreated
-B	treated
+vcf_files
+testdata/chr22_AFR.noanno.biallelic_snps.vcf.gz
+testdata/chr19_AFR.noanno.biallelic_snps.vcf.gz

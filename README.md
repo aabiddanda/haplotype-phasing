@@ -1,8 +1,5 @@
 # 54gene workflow: 54gene phasing pipeline
 
-This is the template for a new Snakemake workflow. Replace this text with a comprehensive description covering the purpose and domain.
-Insert your code into the respective folders, i.e. `scripts`, `rules`, and `envs`. Define the entry point of the workflow in the `Snakefile` and the main configuration in the `config.yaml` file.
-
 ## Authors
 
 * Arjun Biddanda (@aabiddanda54gene)
@@ -15,42 +12,103 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 1. Clone this repository to your local system, into the place where you want to perform the data analysis.
 ```
-    git clone ______
+    git clone https://gitlab.com/data-analysis5/imputation/54gene-phasing.git
 ```
 
-### Step 2: Configure workflow
+### Step 2: Configuration definitions & workflow
 
-Configure the workflow according to your needs via editing the files in the `config/` folder. Adjust `config.yaml` to configure the workflow execution, and `manifest.tsv` to specify your sample setup.
+Configure the workflow according to your needs via editing the files in the `config/` folder. The two key files are the `manifest` and `config.yaml` files. The manifest contains two columns:
 
-### Step 3: Install Snakemake
 
-Install Snakemake using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+#### Manifest File
 
-    conda create -c bioconda -c conda-forge -n snakemake snakemake
+`chrom` | `vcf_file`
+-------------------
+chr22  testdata/chr22.vcf.gz
 
-For installation details, see the [instructions in the Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+
+The `vcf_file` indications can be relative paths to the top-level directory or absolute paths on your current system. The chromosome must be the same as the one in the VCF file (this is enforced by a snakemake checkpoint.
+
+#### Multi-chromosome VCF
+
+If you have a file that contains many samples across multiple chromosomes, you can simply feed in this file into `config.yaml` under the tag:
+
+```
+combined_vcf: "testdata/merged_n100.vcf.gz"
+combined_outfix: "data/test"
+```
+
+, where the first line specifies the merged file (containing any number of chromosomes in chr1..chr22) and the `combined_outfix` variable refers to the prefix of each split VCF file.
+
+#### Configuration YAML
+
+The key item in the configuration is the `manifest` and `genome_build`:
+
+```
+manifest: "config/manifest.tsv"
+genome_build: "b38"
+outfix: "test"
+```
+
+The various phasing algorithms are organized under the `tools` field in the YAML, with the `enabled` keyword defining whether the algorithm is run. The currently supported algorithms are:
+
+* [SHAPEIT4](https://odelaneau.github.io/shapeit4/)
+* [EAGLE2](https://alkesgroup.broadinstitute.org/Eagle/)
+
+If you are interested in specific parameters for each algorithm please look them up on the manual pages. The relevant parameterizations we have included for the algorithms here:
+
+##### Shapeit4
+
+* `mcmc-iterations`: specifies the three different kinds of MCMC iteration (documented [here] (https://odelaneau.github.io/shapeit4/#documentation))
+* `pbwt-depth`: number of conditioning haplotypes (default 4)
+* `pbwt-mdr`: missing data rate (default 0.5)
+* `pbwt-mac`: minimum minor allele count for phasing
+* `seed`: Random number seed for MCMC initialization
+* `sequencing`: sequencing mode for shapeit4
+
+##### EAGLE2
+
+* `kpbwt`: Number of PBWT conditioning haplotypes
+* `pbwt-iters`: Number of PBWT iterations
+* `expect-ibd`: Expected IBD length in centiMorgans
+* `no-impute-missing`: Option to not impute missing data (default no)
+* `geno-err-prob`: Error probability for HMM
+* `hist-factor`: history factor for copying model
+
+
+### Step 3: Install Environment
+
+Install Snakemake and the baseline environment using [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html):
+
+```
+conda env create -f environment.yaml
+```
+
+You may also use [mamba](https://github.com/mamba-org/mamba) for faster dependency management.
 
 ### Step 4: Execute workflow
 
 Activate the conda environment:
-
-    conda activate snakemake
-
+```
+    conda activate 54gene-phasing
+```
 Test your configuration by performing a dry-run via
-
+```
     snakemake --use-conda -n
-
+```
 Execute the workflow locally via
-
+```
     snakemake --use-conda --cores $N
-
+```
 using `$N` cores or run it in a cluster environment via
-
+```
     snakemake --use-conda --cluster qsub --jobs 100
-
+```
 See the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/executable.html) for further details.
 
 ### Step 5: Investigate results
+
+All results will be under the `results/` directory and organized by algorithm (e.g. `results/shapeit4/`).
 
 ### Step 6: Commit changes
 
@@ -69,18 +127,3 @@ Whenever you want to synchronize your workflow copy with new developments from u
 4. Investigate the changes: `vim upstream-changes.diff`.
 5. Apply the modified diff via: `git apply upstream-changes.diff`.
 6. Carefully check whether you need to update the config files: `git diff HEAD upstream/master config`. If so, do it manually, and only where necessary, since you would otherwise likely overwrite your settings and samples.
-
-
-### Step 8: Contribute back
-
-In case you have also changed or added steps, please consider contributing them back to the original repository:
-
-1. [Fork](https://help.github.com/en/articles/fork-a-repo) the original repo to a personal or lab account.
-2. [Clone](https://help.github.com/en/articles/cloning-a-repository) the fork to your local system, to a different place than where you ran your analysis.
-3. Copy the modified files from your analysis to the clone of your fork, e.g., `cp -r workflow path/to/fork`. Make sure to **not** accidentally copy config file contents or sample sheets. Instead, manually update the example config files if necessary.
-4. Commit and push your changes to your fork.
-5. Create a [pull request](https://help.github.com/en/articles/creating-a-pull-request) against the original repository.
-
-## Testing
-
-Test cases are in the subfolder `tests`. They are automatically executed via continuous integration (TBD).

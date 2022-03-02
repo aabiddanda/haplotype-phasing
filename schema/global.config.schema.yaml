@@ -1,0 +1,90 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+description: "54gene-phasing-pipeline/snakemake global configuration file"
+type: object
+properties:
+  manifest:
+    type: string
+  combined_vcf:
+    type: string
+    default: ""
+  combined_outfix:
+    type: string
+    default: ""
+  genome_build:
+    type: string
+    pattern: "^b38$"
+  outfix:
+    type: string
+  tools:
+    type: object
+    pattern: "^shapeit4$|^eagle$"
+    properties:
+      shapeit4:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+          mcmc-iterations:
+            type: string
+            pattern: "[0-9]+[b|p|m],"
+          pbwt-depth:
+            type: integer
+            minimum: 2
+          pbwt-mdr:
+            type: number
+            minimum: 0.0
+          pbwt-mac:
+            type: integer
+            minimum: 2
+          seed:
+            type: integer
+            minimum: 1
+          sequencing:
+            type: boolean
+        required:
+          - enabled
+          - mcmc-iterations
+          - pbwt-depth
+          - pbwt-mdr
+          - pbwt-mac
+          - seed
+          - sequencing
+      eagle:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+          kpbwt:
+            type: integer
+            minimum: 2
+          pbwt-iters:
+            type: integer
+            minimum: 0
+          expect-ibd:
+            type: number
+            minimum: 0
+          no-impute-missing:
+            type: boolean
+          geno-err-prob:
+            type: number
+            minimum: 0.00001
+            maximum: 0.5
+          hist-factor:
+            type: number
+            minimum: 0
+        required:
+          - enabled
+          - kpbwt
+          - pbwt-iters
+          - expect-ibd
+          - no-impute-missing
+          - geno-err-prob
+          - hist-factor
+    required:
+      - shapeit4
+      - eagle
+required:
+  - manifest
+  - tools
+  - genome_build
+  - outfix

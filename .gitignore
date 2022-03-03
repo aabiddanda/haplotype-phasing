@@ -19,6 +19,7 @@ github.com/*
 
 data/*
 config/*.tsv
+*.key
 testdata
 testdata/*
 

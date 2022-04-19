@@ -1,0 +1,11 @@
+name: switch_error
+channels:
+  - https://gitlab.com/data-analysis5/conda-54gene/-/raw/default/conda-54gene
+  - bioconda
+  - conda-forge
+  - hcc
+dependencies:
+  - switch-error
+  - r-mathlib
+  - boost=1.75.0
+  - htslib

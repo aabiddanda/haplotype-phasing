@@ -1,3 +1,2 @@
 vcf_files
-testdata/chr22_AFR.noanno.biallelic_snps.vcf.gz
-testdata/chr19_AFR.noanno.biallelic_snps.vcf.gz
+testdata/CCDG_14151_B01_GRM_WGS_2020-08-05_chr22.filtered.shapeit2-duohmm-phased.yri_only.unphased.vcf.gz

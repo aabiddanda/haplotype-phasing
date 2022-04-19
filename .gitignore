@@ -22,10 +22,12 @@ config/*.tsv
 *.key
 testdata
 testdata/*
+*.tar.gz
 
 # Workflow Artifacts
 .snakemake/
 checkpoints/
+benchmark/
 
 # C Artifacts
 *.so

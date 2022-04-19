@@ -1,0 +1,23 @@
+manifest: "config/manifest.tsv"
+genome_build: "b38"
+evaluation:
+  enabled: no
+  fam: "testdata/yri_trios.txt" # set this to the empty string to not use any trios
+  maf: 0.01 # default is 0.0 generally
+tools:
+  shapeit4: # defaults set by https://odelaneau.github.io/shapeit4/
+    enabled: yes
+    mcmc-iterations: "5b,1p,1b,1p,1b,1p,5m"
+    pbwt-depth: 4
+    pbwt-mdr: 0.5
+    pbwt-mac: 2
+    seed: 42
+    sequencing: false
+  eagle:
+    enabled: no
+    kpbwt: 10000
+    pbwt-iters: 0
+    expect-ibd: 2.0
+    no-impute-missing: no
+    geno-err-prob: 0.003
+    hist-factor: 0

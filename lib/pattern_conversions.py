@@ -11,4 +11,6 @@ def convert_build_to_hg(build_str: str) -> str:
     if build_str == "b38":
         return "hg38"
     else:
-        raise ValueError("build -> hg conversion not supported for {}".format(build_str))
+        raise ValueError(
+            "build -> hg conversion not supported for {}".format(build_str)
+        )

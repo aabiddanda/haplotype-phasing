@@ -1,5 +1,7 @@
 # 54gene workflow: 54gene phasing pipeline
 
+This pipeline conducts internal population phasing for assorted datasets using pre-existing software.
+
 ## Authors
 
 * Arjun Biddanda (@aabiddanda54gene)
@@ -20,35 +22,33 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 Configure the workflow according to your needs via editing the files in the `config/` folder. The two key files are the `manifest` and `config.yaml` files. The manifest contains two columns:
 
 
-#### Manifest File
 
-`chrom` | `vcf_file`
+
+#### Global Configuration
+
+The global manifest file must have the following columns:
+
+```
+analysis_name	analysis_config
+test1	config/analyses/test1.yaml
+test2	config/analyses/test2.yaml
+```
+
+where each analysis is shown as a row.
+
+
+#### Analysis-Specific Configuration
+
+The manifest file for a specific analysis is:
+
+```
+vcf_file
 -------------------
-chr22  testdata/chr22.vcf.gz
-
-
-The `vcf_file` indications can be relative paths to the top-level directory or absolute paths on your current system. The chromosome must be the same as the one in the VCF file (this is enforced by a snakemake checkpoint.
-
-#### Multi-chromosome VCF
-
-If you have a file that contains many samples across multiple chromosomes, you can simply feed in this file into `config.yaml` under the tag:
-
-```
-combined_vcf: "testdata/merged_n100.vcf.gz"
-combined_outfix: "data/test"
+testdata/chr22.vcf.gz
 ```
 
-, where the first line specifies the merged file (containing any number of chromosomes in chr1..chr22) and the `combined_outfix` variable refers to the prefix of each split VCF file.
 
-#### Configuration YAML
-
-The key item in the configuration is the `manifest` and `genome_build`:
-
-```
-manifest: "config/manifest.tsv"
-genome_build: "b38"
-outfix: "test"
-```
+The `vcf_file` indications can be relative paths to the top-level directory or absolute paths on your current system. We note that the files are automatically organized into "per-chromosome" inputs so this can be specified regardless if you have a merged VCF file or not.
 
 The various phasing algorithms are organized under the `tools` field in the YAML, with the `enabled` keyword defining whether the algorithm is run. The currently supported algorithms are:
 
@@ -65,6 +65,7 @@ If you are interested in specific parameters for each algorithm please look them
 * `pbwt-mac`: minimum minor allele count for phasing
 * `seed`: Random number seed for MCMC initialization
 * `sequencing`: sequencing mode for shapeit4
+
 
 ##### EAGLE2
 

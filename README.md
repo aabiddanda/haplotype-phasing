@@ -50,6 +50,44 @@ testdata/chr22.vcf.gz
 
 The `vcf_file` indications can be relative paths to the top-level directory or absolute paths on your current system. We note that the files are automatically organized into "per-chromosome" inputs so this can be specified regardless if you have a merged VCF file or not.
 
+##### Specifying Recombination Maps
+
+One of the additional/optional specifications available is to define per-chromosome recombination maps:
+
+```
+recombination_maps: "config/recombination_maps/gwd.tsv"
+```
+
+, where the tab separated file specifies [HapMap-formatted](https://ftp.ncbi.nlm.nih.gov/hapmap/recombination/latest/) genetic maps:
+```
+chroms	recombination_map
+chr22	resources/hg38/GWD/GWD_recombination_map_hapmap_format_hg38_chr_22.txt
+```
+
+NOTE: if this is not specified, then the default recombination map for each algorithm (largely the original HapMap Maps) will be used.
+
+##### Specifying Reference Panels
+
+
+We can also specify reference panels within the pipeline, using the current block within analysis-specific YAML file:
+
+```
+reference_panel: "config/ref_panels/hgdp.tsv"
+```
+
+where each file contains a specified reference file in per-chromosome format (in VCF/BCF format):
+
+```
+chroms	ref_panel
+chr22	/home/ec2-user/local_data/hgdp_data/hgdp_wgs.20190516.statphase.autosomes.chr22.bcf
+```
+
+NOTE: that the header in this case must be provided and the file must be tab-separated.
+NOTE: without this specified the default is to run phasing in "non-reference" mode
+
+
+##### Phasing Algorithm Options
+
 The various phasing algorithms are organized under the `tools` field in the YAML, with the `enabled` keyword defining whether the algorithm is run. The currently supported algorithms are:
 
 * [SHAPEIT4](https://odelaneau.github.io/shapeit4/)
@@ -57,7 +95,7 @@ The various phasing algorithms are organized under the `tools` field in the YAML
 
 If you are interested in specific parameters for each algorithm please look them up on the manual pages. The relevant parameterizations we have included for the algorithms here:
 
-##### Shapeit4
+###### Shapeit4
 
 * `mcmc-iterations`: specifies the three different kinds of MCMC iteration (documented [here] (https://odelaneau.github.io/shapeit4/#documentation))
 * `pbwt-depth`: number of conditioning haplotypes (default 4)
@@ -67,7 +105,7 @@ If you are interested in specific parameters for each algorithm please look them
 * `sequencing`: sequencing mode for shapeit4
 
 
-##### EAGLE2
+###### EAGLE2
 
 * `kpbwt`: Number of PBWT conditioning haplotypes
 * `pbwt-iters`: Number of PBWT iterations

@@ -1,3 +1,4 @@
 analysis_name	analysis_config
 test1	config/analyses/test1.yaml
 test2	config/analyses/test2.yaml
+test3	config/analyses/test3.yaml

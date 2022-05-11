@@ -44,7 +44,10 @@ for analysis_name, filename in zip(analyses.analysis_name, analyses.analysis_con
     analysis_configs[analysis_name] = x
     validate(x, "../schema/analysis.config.schema.yaml")
 
+# Definition of potential chromosomes
 CHROM = [f"chr{x}" for x in range(1, 23)] + ["chrX"]
+
+print(analysis_configs)
 
 
 def create_full_targets(wildcards):

@@ -91,6 +91,12 @@ properties:
       - enabled
       - fam
       - maf
+  reference_panel:
+    type: string
+    default: ""
+  recombination_maps:
+    type: string
+    default: ""
 required:
   - evaluation
   - genome_build

@@ -1,0 +1,16 @@
+image: cpalmer718/snakemake-gcc
+
+stages:
+  - pytest
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+run_all:
+  stage: pytest
+  script:
+    - mamba install pytest-cov
+    - pytest --cov | awk '/^TOTAL/ {print $4}' | sed 's/%//' | awk '{print "Final coverage: " $0}'
+  coverage: '/Final coverage: \d+\.?\d*/'

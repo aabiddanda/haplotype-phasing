@@ -33,7 +33,7 @@ checkpoint list_chromosomes:
             "results/per_chrom_inputs/{{outfix}}/{chrom}.vcf.gz.tbi", chrom=CHROM
         ),
     output:
-        "checkpoints/{outfix}_chrom.list",
+        "checkpoints/list_chromosomes/{outfix}_chrom.list",
     conda:
         "../envs/bcftools.yaml"
     shell:
@@ -79,7 +79,7 @@ rule split_per_chrom:
         vcf="{vcf_file}",
         tbi="{vcf_file}.tbi",
     output:
-        temp("results/per_chrom/{vcf_file}/{chrom}.vcf.gz"),
+        "results/per_chrom/{vcf_file}/{chrom}.vcf.gz",
     threads: 4
     conda:
         "../envs/bcftools.yaml"
@@ -118,3 +118,75 @@ rule convert_vcf2bcf:
         "../envs/bcftools.yaml"
     shell:
         "bcftools view -r {wildcards.chrom} {input.unphased_vcf} --threads {threads} -Ob -o {output.bcf}"
+
+
+checkpoint valid_reference_panel:
+    """Checkpoint for validating the reference panel."""
+    output:
+        "checkpoints/ref_panel/{outfix}.ref_panel",
+    run:
+        if analysis_configs[wildcards.outfix]["reference_panel"] == "":
+            shell("touch {output}")
+        else:
+            ref_panel_manifest = pd.read_csv(
+                analysis_configs[wildcards.outfix]["reference_panel"], sep="\t"
+            )
+            for c in ref_panel_manifest.chroms:
+                assert c in CHROM
+            assert (
+                ref_panel_manifest.chroms.size
+                == np.unique(ref_panel_manifest.chroms.values).size
+            )
+            index_files = [
+                pc.determine_index(r) for r in ref_panel_manifest.ref_panel.values
+            ]
+            ref_panel_manifest["file_index"] = index_files
+            ref_panel_manifest.to_csv(str(output), sep="\t", index=False)
+
+
+def extract_ref_panel(wildcards):
+    """Extract the information about the reference panel."""
+    checkpoint_file = checkpoints.valid_reference_panel.get(
+        outfix=wildcards.outfix
+    ).output[0]
+    if Path(checkpoint_file).stat().st_size == 0:
+        return [], []
+    else:
+        ref_panel_manifest = pd.read_csv(checkpoint_file, sep="\t").set_index("chroms")
+        ref_panel = ref_panel_manifest.filter(
+            [wildcards.chrom], axis=0
+        ).ref_panel.values[0]
+        ref_panel_idx = ref_panel_manifest.filter(
+            [wildcards.chrom], axis=0
+        ).file_index.values[0]
+        return ref_panel, ref_panel_idx
+
+
+rule convert_hapmap_to_formats:
+    """Convert hapmap formatted genetic maps to shapeit4/eagle format."""
+    output:
+        temp("results/recomb_maps/{algo}/{outfix}/{chrom}.gmap.gz"),
+    resources:
+        mem="1G",
+        time="0:30:00",
+    run:
+        if analysis_configs[wildcards.outfix]["recombination_maps"] == "":
+            raise ValueError("Cannot convert a recombination map if none are provided!")
+        else:
+            recomb_map_manifest = pd.read_csv(
+                analysis_configs[wildcards.outfix]["recombination_maps"],
+                sep="\t",
+                dtype=str,
+            )
+            for c in recomb_map_manifest.chroms:
+                assert c in CHROM
+            assert (
+                recomb_map_manifest.chroms.size
+                == np.unique(recomb_map_manifest.chroms.values).size
+            )
+            assert wildcards.chrom in recomb_map_manifest.chroms.values
+            filename = recomb_map_manifest[
+                recomb_map_manifest.chroms == wildcards.chrom
+            ].recombination_map.values[0]
+            transformed_df = pc.convert_hapmap_genmap(filename, wildcards.algo)
+            transformed_df.to_csv(str(output), index=False, sep="\t")

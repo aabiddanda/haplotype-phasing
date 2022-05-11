@@ -16,14 +16,23 @@ rule copy_eagle_genetic_maps:
         """
 
 
+def get_eagle_recmaps(wildcards):
+    if analysis_configs[wildcards.outfix]["recombination_maps"] == "":
+        return "resources/eagle/genetic_map_{}_withX.txt.gz".format(
+            pc.convert_build_to_hg(wildcards.genome_build)
+        )
+    else:
+        return f"results/recomb_maps/eagle/{wildcards.outfix}/{wildcards.chrom}.gmap.gz"
+
+
 rule phase_eagle:
     """Non-reference phasing using EAGLE2."""
     input:
         bcf_file="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf",
         bcf_file_idx="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf.csi",
-        genetic_map=lambda wildcards: "resources/eagle/genetic_map_{}_withX.txt.gz".format(
-            pc.convert_build_to_hg(analysis_configs[wildcards.outfix]["genome_build"])
-        ),
+        reference_panel=lambda wildcards: extract_ref_panel(wildcards)[0],
+        referance_panel_idx=lambda wildcards: extract_ref_panel(wildcards)[1],
+        genetic_map=get_eagle_recmaps,
     output:
         phased_vcf="results/eagle/{outfix}.{genome_build}.{chrom}.vcf.gz",
     log:
@@ -52,6 +61,12 @@ rule phase_eagle:
         geno_err_prob=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
             "eagle"
         ]["geno-err-prob"],
+        ref_panel=lambda wildcards, input: f"--vcfRef={input.reference_panel}"
+        if input.reference_panel != []
+        else "",
+        vcf_target=lambda wildcards, input: f"--vcfTarget={input.bcf_file}"
+        if input.reference_panel != []
+        else "--vcf={input.bcf_file}",
     threads: 8
     resources:
         time="4:00:00",
@@ -68,7 +83,8 @@ rule phase_eagle:
             --expectIBDcM={params.expect_ibd}\
             --numThreads={threads}\
             {params.imp_missing}\
-            --vcf={input.bcf_file}\
+            {params.vcf_target}\
+            {params.ref_panel}\
             --geneticMapFile={input.genetic_map}\
             --outPrefix={params.outprefix} 2>&1 | tee {log}
         """

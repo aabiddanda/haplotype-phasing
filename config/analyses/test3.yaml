@@ -1,10 +1,9 @@
 manifest: "config/manifest.tsv"
 genome_build: "b38"
 evaluation:
-  enabled: yes
+  enabled: no
   fam: "testdata/yri_trios.txt" # set this to the empty string to not use any trios
   maf: 0.01 # default is 0.0 generally
-reference_panel: "" # leave empty if no reference panel needed
 tools:
   shapeit4: # defaults set by https://odelaneau.github.io/shapeit4/
     enabled: yes
@@ -22,3 +21,5 @@ tools:
     no-impute-missing: no
     geno-err-prob: 0.003
     hist-factor: 0
+reference_panel: "config/ref_panels/hgdp.tsv"
+recombination_maps: "config/recombination_maps/gwd.tsv"

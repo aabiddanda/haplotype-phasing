@@ -32,12 +32,24 @@ rule download_shapeit4_genetic_maps:
         """
 
 
+def get_shapeit4_recmap(wildcards):
+    """Get the recombination-map set for shapeit4."""
+    if analysis_configs[wildcards.outfix]["recombination_maps"] == "":
+        return f"resources/shapeit4-4.2.2/maps/{wildcards.chrom}.{wildcards.genome_build}.gmap.gz"
+    else:
+        return (
+            f"results/recomb_maps/shapeit4/{wildcards.outfix}/{wildcards.chrom}.gmap.gz"
+        )
+
+
 rule phase_shapeit4:
     """Non-reference phasing using shapeit4."""
     input:
         unphased_bcf="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf",
         unphased_bcf_idx="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf.csi",
-        genetic_map="resources/shapeit4-4.2.2/maps/{chrom}.{genome_build}.gmap.gz",
+        reference_panel=lambda wildcards: extract_ref_panel(wildcards)[0],
+        referance_panel_idx=lambda wildcards: extract_ref_panel(wildcards)[1],
+        genetic_map=lambda wildcards: get_shapeit4_recmap(wildcards),
     output:
         phased_vcf="results/shapeit4/{outfix}.{genome_build}.{chrom}.vcf.gz",
     log:
@@ -65,6 +77,9 @@ rule phase_shapeit4:
         mcmc_iterations=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
             "shapeit4"
         ]["mcmc-iterations"],
+        ref_panel=lambda wildcards, input: f"--reference {input.reference_panel}"
+        if input.reference_panel != []
+        else "",
     threads: 8
     resources:
         time="4:00:00",
@@ -73,5 +88,13 @@ rule phase_shapeit4:
         "../envs/shapeit4.yaml"
     shell:
         """
-        shapeit4 --input {input.unphased_bcf} --map {input.genetic_map} --seed {params.seed} --region {wildcards.chrom} --mcmc-iterations {params.mcmc_iterations} {params.sequencing} --thread {threads} --output {output.phased_vcf} 2>&1 | tee {log}
+        shapeit4 --input {input.unphased_bcf}\
+            --map {input.genetic_map}\
+            --seed {params.seed}\
+            --region {wildcards.chrom}\
+            --mcmc-iterations {params.mcmc_iterations}\
+            {params.sequencing}\
+            {params.ref_panel}\
+            --thread {threads}\
+            --output {output.phased_vcf} 2>&1 | tee {log}
         """

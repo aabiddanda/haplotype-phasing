@@ -21,3 +21,4 @@ tools:
     no-impute-missing: no
     geno-err-prob: 0.003
     hist-factor: 0
+reference_panel: "config/ref_panels/phase3_1kg.tsv"

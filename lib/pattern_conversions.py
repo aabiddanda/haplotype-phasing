@@ -23,6 +23,7 @@ def determine_index(filename: str) -> str:
     """Determine the appropriate index for a VCF/BCF file."""
     path = Path(filename)
     if path.is_file():
+        # print(path.suffixes, path.suffixes[-1], path.suffixes[-2])
         if path.suffix == ".bcf":
             return path.as_posix() + ".csi"
         elif path.suffixes[-1] == ".gz" and path.suffixes[-2] == ".vcf":
@@ -40,8 +41,6 @@ def convert_hapmap_genmap(filename: str, algo: str) -> pd.DataFrame:
         raise ValueError(
             "HapMap Genetic Maps should only have [chrom, position, rate (cM/Mb), map (cM)] columns!"
         )
-    # if hapmap_df.columns == [0, 1, 2, 3]:
-    # raise NotImplementedError("HapMap data does not have column headers!")
     hapmap_df.columns = ["chr", "pos", "rate", "cM"]
     if algo == "shapeit4":
         return hapmap_df[["pos", "chr", "cM"]]

@@ -12,5 +12,5 @@ run_all:
   stage: pytest
   script:
     - mamba install pytest-cov
-    - pytest --cov | awk '/^TOTAL/ {print $4}' | sed 's/%//' | awk '{print "Final coverage:" $0}'
+    - pytest --cov | awk '/^TOTAL/ {print $4}' | sed 's/%//' | awk '{printf("Final coverage:\ %0.2f", $1)}'
   coverage: '/Final coverage: \d+\.?\d*/'

@@ -1,4 +1,4 @@
-name: 54gene-phasing
+name: hap-phasing
 channels:
   - bioconda
   - conda-forge

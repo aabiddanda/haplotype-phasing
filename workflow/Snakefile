@@ -21,7 +21,7 @@ from lib import target_construction
 
 # record commit-ish ID
 label = subprocess.check_output(["git", "describe", "--always"]).strip()
-print(f"54gene phasing workflow {label}")
+print(f"haplotype phasing workflow {label}")
 
 # create log dir
 pathlib.Path("logs/").mkdir(parents=True, exist_ok=True)

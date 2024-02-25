@@ -6,7 +6,7 @@ properties:
     type: string
   genome_build:
     type: string
-    pattern: "^b38$"
+    pattern: "^b37$|^b38$|^t2t$"
   tools:
     type: object
     pattern: "^shapeit4$|^eagle$"

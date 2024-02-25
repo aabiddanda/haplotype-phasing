@@ -44,14 +44,14 @@ def get_shapeit4_recmap(wildcards):
 
 
 rule create_constant_recombination_map:
-    """Create a constant recombination map."""
+    """Create a constant recombination map with 1cM equal to 1 Megabase."""
     input:
         unphased_bcf="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf",
         unphased_bcf_idx="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf.csi",
     output:
-        gmap="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.gmap.gz",
+        gmap="results/recomb_maps/shapeit4/{outfix}/{chrom}.gmap.gz",
     shell:
-        'bcftools query -f "%POS\t%CHROM" {input.unphased_bcf} | awk \'BEGIN{print "pos\tchr\tcM"}; {x=1e-6; print $1"\t"$2"\t"x}\' | gzip > {output.gmap}'
+        'bcftools query -f "%POS\t%CHROM" {input.unphased_bcf} | awk \'BEGIN{c = 0; print "pos\tchr\tcM"}; {print $1"\t"$2"\t"c*1e-6; c+=$1;}\' | gzip > {output.gmap}'
 
 
 rule phase_shapeit4:
@@ -66,8 +66,6 @@ rule phase_shapeit4:
         phased_vcf="results/shapeit4/{outfix}.{genome_build}.{chrom}.vcf.gz",
     log:
         "logs/shapeit4/{outfix}.{genome_build}.{chrom}.output.log",
-    wildcard_constraints:
-        chrom="chr[[0-9]+|X]",
     benchmark:
         "benchmark/shapeit4/{outfix}.{genome_build}.{chrom}.tsv"
     params:

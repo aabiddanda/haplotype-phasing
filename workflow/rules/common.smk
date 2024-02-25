@@ -194,6 +194,8 @@ rule convert_hapmap_to_formats:
     """Convert hapmap formatted genetic maps to shapeit4/eagle format."""
     output:
         temp("results/recomb_maps/{algo}/{outfix}/{chrom}.gmap.gz"),
+    wildcard_constraints:
+        algo="shapeit4|eagle",
     resources:
         mem="1G",
         time="0:30:00",

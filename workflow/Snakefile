@@ -89,6 +89,6 @@ rule all:
 
 # including individual rules
 include: "rules/common.smk"
-include: "rules/shapeit4.smk"
+include: "rules/shapeit.smk"
 include: "rules/eagle.smk"
 include: "rules/evaluation.smk"

@@ -1,3 +1,4 @@
+#!python3
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 import re
 
@@ -40,6 +41,17 @@ def get_shapeit4_recmap(wildcards):
         return (
             f"results/recomb_maps/shapeit4/{wildcards.outfix}/{wildcards.chrom}.gmap.gz"
         )
+
+
+rule create_constant_recombination_map:
+    """Create a constant recombination map."""
+    input:
+        unphased_bcf="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf",
+        unphased_bcf_idx="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.bcf.csi",
+    output:
+        gmap="results/per_chrom_inputs/{outfix}.{genome_build}.{chrom}.gmap.gz",
+    shell:
+        'bcftools query -f "%POS\t%CHROM" {input.unphased_bcf} | awk \'BEGIN{print "pos\tchr\tcM"}; {x=1e-6; print $1"\t"$2"\t"x}\' | gzip > {output.gmap}'
 
 
 rule phase_shapeit4:

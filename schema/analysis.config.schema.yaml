@@ -9,9 +9,39 @@ properties:
     pattern: "^b37$|^b38$|^t2t$"
   tools:
     type: object
-    pattern: "^shapeit4$|^eagle$"
+    pattern: "^shapeit4$|^beagle$|^eagle$|^shapeit5$"
     properties:
       shapeit4:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+          mcmc-iterations:
+            type: string
+            pattern: "[0-9]+[b|p|m],"
+          pbwt-depth:
+            type: integer
+            minimum: 2
+          pbwt-mdr:
+            type: number
+            minimum: 0.0
+          pbwt-mac:
+            type: integer
+            minimum: 2
+          seed:
+            type: integer
+            minimum: 1
+          sequencing:
+            type: boolean
+        required:
+          - enabled
+          - mcmc-iterations
+          - pbwt-depth
+          - pbwt-mdr
+          - pbwt-mac
+          - seed
+          - sequencing
+      shapeit5:
         type: object
         properties:
           enabled:
@@ -72,9 +102,29 @@ properties:
           - no-impute-missing
           - geno-err-prob
           - hist-factor
+      beagle:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+          seed:
+            type: number
+            minimum: 1
+          burnin:
+            type: number
+            minimum: 3
+          iterations:
+            type: number
+            minimum: 12
+        required:
+          - enabled
+          - seed 
+          - burnin
+          - iterations
     required:
       - shapeit4
       - eagle
+      - beagle
   evaluation:
     type: object
     properties:

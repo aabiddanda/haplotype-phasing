@@ -1,6 +1,6 @@
-name: shapeit4
+name: beagle
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - shapeit4
+  - beagle

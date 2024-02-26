@@ -91,4 +91,5 @@ rule all:
 include: "rules/common.smk"
 include: "rules/shapeit.smk"
 include: "rules/eagle.smk"
+include: "rules/beagle.smk"
 include: "rules/evaluation.smk"

@@ -59,7 +59,8 @@ def uniq_chroms(wildcards):
         filename = checkpoints.list_chromosomes_full.get(vcf_file=c).output[0]
         chromosomes.append(np.loadtxt(filename, dtype=str))
     uniq_chroms = np.unique(chromosomes)
-    return uniq_chroms
+    filt_chroms = [c for c in uniq_chroms if ("chrY" not in c) and ("chrX" not in c)]
+    return filt_chroms
 
 
 checkpoint list_chromosomes:

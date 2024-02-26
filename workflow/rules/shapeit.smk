@@ -125,23 +125,23 @@ rule phase_shapeit5:
     benchmark:
         "benchmark/shapeit5/{outfix}.{genome_build}.{chrom}.tsv"
     params:
-        seed=lambda wildcards: analysis_configs[wildcards.outfix]["tools"]["shapeit4"][
+        seed=lambda wildcards: analysis_configs[wildcards.outfix]["tools"]["shapeit5"][
             "seed"
         ],
         sequencing=lambda wildcards: "--sequencing"
-        if analysis_configs[wildcards.outfix]["tools"]["shapeit4"]["sequencing"]
+        if analysis_configs[wildcards.outfix]["tools"]["shapeit5"]["sequencing"]
         else "",
         pbwt_depth=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
-            "shapeit4"
+            "shapeit5"
         ]["pbwt-depth"],
         pbwt_mdr=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
-            "shapeit4"
+            "shapeit5"
         ]["pbwt-mdr"],
         pbwt_mac=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
-            "shapeit4"
+            "shapeit5"
         ]["pbwt-mac"],
         mcmc_iterations=lambda wildcards: analysis_configs[wildcards.outfix]["tools"][
-            "shapeit4"
+            "shapeit5"
         ]["mcmc-iterations"],
         ref_panel=lambda wildcards, input: f"--reference {input.reference_panel}"
         if input.reference_panel != []

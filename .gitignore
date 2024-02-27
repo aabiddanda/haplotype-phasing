@@ -23,6 +23,7 @@ config/*.tsv
 testdata
 testdata/*
 *.tar.gz
+nohup.out
 
 # Workflow Artifacts
 .snakemake/

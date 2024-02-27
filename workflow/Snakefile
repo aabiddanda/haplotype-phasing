@@ -47,8 +47,6 @@ for analysis_name, filename in zip(analyses.analysis_name, analyses.analysis_con
 # Definition of potential chromosomes
 CHROM = [f"chr{x}" for x in range(1, 23)] + ["chrX"]
 
-print(analysis_configs)
-
 
 def create_full_targets(wildcards):
     """Create the full set of targets."""

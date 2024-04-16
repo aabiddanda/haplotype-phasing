@@ -1,10 +1,12 @@
-# 54gene workflow: 54gene phasing pipeline
+# Haplotype Phasing for large-scale genotype datasets
 
 This pipeline conducts internal population phasing for assorted datasets using pre-existing software.
 
 ## Authors
 
-* Arjun Biddanda (@aabiddanda54gene)
+* Arjun Biddanda (@aabiddanda)
+
+This was largely built while @aabiddanda was employed by 54Gene, but has been released with an MIT Licence.
 
 ## Usage
 
@@ -14,15 +16,12 @@ If you use this workflow in a paper, don't forget to give credits to the authors
 
 1. Clone this repository to your local system, into the place where you want to perform the data analysis.
 ```
-    git clone https://gitlab.com/data-analysis5/imputation/54gene-phasing.git
+    git clone git@github.com:aabiddanda/haplotype-phasing.git
 ```
 
 ### Step 2: Configuration definitions & workflow
 
 Configure the workflow according to your needs via editing the files in the `config/` folder. The two key files are the `manifest` and `config.yaml` files. The manifest contains two columns:
-
-
-
 
 #### Global Configuration
 
@@ -129,7 +128,7 @@ You may also use [mamba](https://github.com/mamba-org/mamba) for faster dependen
 
 Activate the conda environment:
 ```
-    conda activate 54gene-phasing
+    conda activate hap-phasing
 ```
 Test your configuration by performing a dry-run via
 ```

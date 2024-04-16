@@ -1,3 +1,6 @@
+#!python3
+
+
 rule copy_eagle_genetic_maps:
     """Copy the EAGLE genetic maps."""
     output:

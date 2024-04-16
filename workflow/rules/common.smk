@@ -1,3 +1,4 @@
+#!python3
 import numpy as np
 
 
@@ -25,21 +26,6 @@ rule index_bcf:
         "bcftools index -f {input.bcf}"
 
 
-checkpoint list_chromosomes:
-    """List the chromosomes available in any of the files."""
-    input:
-        vcfs=expand("results/per_chrom_inputs/{{outfix}}/{chrom}.vcf.gz", chrom=CHROM),
-        tbis=expand(
-            "results/per_chrom_inputs/{{outfix}}/{chrom}.vcf.gz.tbi", chrom=CHROM
-        ),
-    output:
-        "checkpoints/list_chromosomes/{outfix}_chrom.list",
-    conda:
-        "../envs/bcftools.yaml"
-    shell:
-        "for i in {input.vcfs}; do tabix -l $i; done > {output}"
-
-
 checkpoint list_samples:
     """List the samples per vcf file."""
     input:
@@ -51,6 +37,49 @@ checkpoint list_samples:
         "../envs/bcftools.yaml"
     shell:
         "bcftools query -l {input.vcf} > {output}"
+
+
+checkpoint list_chromosomes_full:
+    input:
+        vcf="{vcf_file}",
+        tbi="{vcf_file}.tbi",
+    output:
+        "checkpoints/list_chromosomes/{vcf_file}.chrom.full.list",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "tabix -l {input.vcf} > {output}"
+
+
+def uniq_chroms(wildcards):
+    """Error checking to catch errors in sample naming."""
+    manifest = pd.read_csv(analysis_configs[wildcards.outfix]["manifest"], sep="\t")
+    chromosomes = []
+    for c in manifest.vcf_files:
+        filename = checkpoints.list_chromosomes_full.get(vcf_file=c).output[0]
+        chromosomes.append(np.loadtxt(filename, dtype=str))
+    uniq_chroms = np.unique(chromosomes)
+    filt_chroms = [c for c in uniq_chroms if ("chrY" not in c) and ("chrX" not in c)]
+    return filt_chroms
+
+
+checkpoint list_chromosomes:
+    """List the chromosomes available in any of the files."""
+    input:
+        vcfs=lambda wildcards: expand(
+            "results/per_chrom_inputs/{{outfix}}/{chrom}.vcf.gz",
+            chrom=uniq_chroms(wildcards),
+        ),
+        tbis=lambda wildcards: expand(
+            "results/per_chrom_inputs/{{outfix}}/{chrom}.vcf.gz.tbi",
+            chrom=uniq_chroms(wildcards),
+        ),
+    output:
+        "checkpoints/list_chromosomes/{outfix}_chrom.list",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        "for i in {input.vcfs}; do tabix -l $i; done > {output}"
 
 
 def check_sample_order(wildcards):
@@ -166,6 +195,8 @@ rule convert_hapmap_to_formats:
     """Convert hapmap formatted genetic maps to shapeit4/eagle format."""
     output:
         temp("results/recomb_maps/{algo}/{outfix}/{chrom}.gmap.gz"),
+    wildcard_constraints:
+        algo="shapeit4|eagle",
     resources:
         mem="1G",
         time="0:30:00",

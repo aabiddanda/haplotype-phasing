@@ -1,0 +1,6 @@
+name: beagle
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - beagle

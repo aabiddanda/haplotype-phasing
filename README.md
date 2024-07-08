@@ -6,7 +6,7 @@ This pipeline conducts internal population phasing for assorted datasets using p
 
 * Arjun Biddanda (@aabiddanda)
 
-This was largely built while @aabiddanda was employed by 54Gene, but has been released with an MIT Licence.
+This pipeline was largely built while @aabiddanda was employed by 54Gene, but has been released with an MIT Licence.
 
 ## Usage
 
@@ -113,6 +113,14 @@ If you are interested in specific parameters for each algorithm please look them
 * `geno-err-prob`: Error probability for HMM
 * `hist-factor`: history factor for copying model
 
+###### BEAGLE
+
+NOTE: we recommend using Beagle largely if there is no reference panel to use
+
+* `enabled`: Boolean of whether 
+* `seed` : Random seed
+* `burnin`: number of burn-in MCMC iterations
+* `iterations`: number of MCMC phasing iterations
 
 ### Step 3: Install Environment
 
